@@ -52,6 +52,13 @@
           "cameraPermission": "제품 이미지를 촬영하기 위해 카메라 접근 권한이 필요합니다."
         }
       ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "제품 OCR 촬영을 위해 카메라 접근 권한이 필요합니다."
+        }
+      ],
+
       "@react-native-community/datetimepicker"
     ],
     "experiments": {

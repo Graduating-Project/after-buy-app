@@ -388,7 +388,6 @@ export const itemRegisterModelStyle = StyleSheet.create({
 
   bottomArea: {
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxxl,
   },
 
   nextButton: {
@@ -622,21 +621,18 @@ export const itemDetailStyle = StyleSheet.create({
 
   cameraButton: {
     position: "absolute",
-    right: spacing.md,
-    bottom: spacing.md,
+    right: spacing.xxxl,
+    bottom: spacing.xxxl,
     backgroundColor: colors.icon,
     borderRadius: radius.pill,
     padding: spacing.sm,
   },
 
   imageActionContainer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
+    width: "95%",
     backgroundColor: colors.cardBackground,
     padding: spacing.xl,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
+    borderRadius: radius.xl,
     gap: spacing.md,
   },
 
