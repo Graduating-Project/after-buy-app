@@ -46,7 +46,11 @@ export default function MainTabNavigator() {
         options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "ItemList";
 
-          const hideTabBarScreens = ["ItemRegisterModel", "ItemDetail"];
+          const hideTabBarScreens = [
+            "ItemRegisterModel",
+            "ItemDetail",
+            "OCRCamera",
+          ];
 
           return {
             tabBarStyle: hideTabBarScreens.includes(routeName)

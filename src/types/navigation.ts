@@ -18,18 +18,38 @@ export type RootStackParamList = {
   Main: NavigatorScreenParams<MainTabParamList>;
 };
 
+export type OCRType = "MODEL" | "SERIAL" | "RECEIPT";
+
+export type OCRResultPayload =
+  | {
+      ocrType: "MODEL";
+      model_name: string;
+    }
+  | {
+      ocrType: "SERIAL";
+      serial_number: string;
+    }
+  | {
+      ocrType: "RECEIPT";
+      purchase_date?: string;
+      purchase_price?: string;
+      purchase_store?: string;
+    };
+
 export type ItemStackParamList = {
   ItemList: { folderId?: number | null; folderName?: string } | undefined;
   ItemRegisterModel:
     | {
         folderId?: number | null;
         folderName?: string;
+        ocrResult?: OCRResultPayload;
       }
     | undefined;
   ItemDetail:
     | {
         deviceId: number;
         mode?: "view" | "edit";
+        ocrResult?: OCRResultPayload;
       }
     | {
         deviceId?: undefined;
@@ -38,6 +58,11 @@ export type ItemStackParamList = {
         modelName: string;
         mode: "edit";
       };
+
+  OCRCamera: {
+    ocrType: OCRType;
+    sourceScreen: "ItemRegisterModel" | "ItemDetail";
+  };
 };
 
 export type LoginScreenProps = NativeStackScreenProps<

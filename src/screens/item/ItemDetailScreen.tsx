@@ -814,31 +814,32 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
 
     return (
       <View style={styles.card}>
-        <Pressable onPress={() => isEditMode && setImageActionVisible(true)}>
-          {hasImage ? (
-            <Image
-              source={{ uri: draft.image_url }}
-              style={styles.productImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.imagePlaceholder}>
-              <Text style={styles.placeholderText}>
-                제품 이미지를 추가해주세요
-              </Text>
-            </View>
-          )}
+        {hasImage ? (
+          <Image
+            source={{ uri: draft.image_url }}
+            style={styles.productImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.placeholderText}>
+              제품 이미지를 추가해주세요
+            </Text>
+          </View>
+        )}
 
-          {isEditMode && (
-            <View style={styles.cameraButton}>
-              <MaterialCommunityIcons
-                name="camera-plus"
-                size={30}
-                color="white"
-              />
-            </View>
-          )}
-        </Pressable>
+        {isEditMode && (
+          <TouchableOpacity
+            onPress={() => setImageActionVisible(true)}
+            style={styles.cameraButton}
+          >
+            <MaterialCommunityIcons
+              name="camera-plus"
+              size={30}
+              color="white"
+            />
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -1000,22 +1001,27 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
         animationType="fade"
         onRequestClose={() => setImageActionVisible(false)}
       >
-        <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setImageActionVisible(false)}
-        />
-
-        <View style={styles.imageActionContainer}>
+        <View style={styles.modalOverlay}>
           <Pressable
-            style={styles.imageActionButton}
-            onPress={handlePickFromGallery}
-          >
-            <Text style={styles.imageActionText}>갤러리에서 선택</Text>
-          </Pressable>
+            style={styles.modalBackdrop}
+            onPress={() => setImageActionVisible(false)}
+          />
 
-          <Pressable style={styles.imageActionButton} onPress={handleTakePhoto}>
-            <Text style={styles.imageActionText}>직접 촬영</Text>
-          </Pressable>
+          <View style={styles.imageActionContainer}>
+            <Pressable
+              style={styles.imageActionButton}
+              onPress={handlePickFromGallery}
+            >
+              <Text style={styles.imageActionText}>갤러리에서 선택</Text>
+            </Pressable>
+
+            <Pressable
+              style={styles.imageActionButton}
+              onPress={handleTakePhoto}
+            >
+              <Text style={styles.imageActionText}>직접 촬영</Text>
+            </Pressable>
+          </View>
         </View>
       </Modal>
       <Modal
