@@ -107,19 +107,20 @@ export const homeStyles = StyleSheet.create({
   recentThumbnail: {
     width: 72,
     height: 72,
-    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: colors.divider,
-    backgroundColor: colors.white,
+    borderColor: "#EEF2F7",
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: spacing.md,
+    marginRight: spacing.lg,
+    backgroundColor: "#F8FAFC",
+    overflow: "hidden",
   },
 
   recentThumbnailImage: {
     width: "100%",
     height: "100%",
-    borderRadius: radius.sm,
+    borderRadius: 18,
   },
 
   recentItemInfo: {

@@ -134,6 +134,26 @@ export const deviceService = {
     return result.changes;
   },
 
+  updateDeviceName: async (deviceId: number, productName: string) => {
+    const trimmedName = productName.trim();
+
+    if (!trimmedName) {
+      throw new Error("상품명은 비어 있을 수 없습니다.");
+    }
+
+    const result = await db.runAsync(
+      `
+    UPDATE devices
+    SET product_name = ?,
+        updated_at = DATETIME('now')
+    WHERE device_id = ?
+    `,
+      [trimmedName, deviceId],
+    );
+
+    return result.changes;
+  },
+
   deleteDevice: async (deviceId: number) => {
     const result = await db.runAsync(
       `DELETE FROM devices WHERE device_id = ?`,
