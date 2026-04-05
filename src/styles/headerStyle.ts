@@ -41,11 +41,13 @@ export const headerStyles = StyleSheet.create({
     minWidth: 88,
     height: 44,
     paddingHorizontal: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.icon,
+    borderRadius: 999,
+    backgroundColor: colors.primaryDark,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "flex-end",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.18)",
   },
 
   textButtonSaved: {
@@ -53,7 +55,9 @@ export const headerStyles = StyleSheet.create({
     height: 44,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.lg,
-    backgroundColor: colors.iconSaved,
+    backgroundColor: colors.softBlue,
+    borderWidth: 1,
+    borderColor: "rgba(66, 165, 245, 0.20)",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "flex-end",
@@ -68,6 +72,6 @@ export const headerStyles = StyleSheet.create({
   textButtonLabelSaved: {
     fontSize: typography.body,
     fontWeight: "700",
-    color: colors.iconSavedText,
+    color: colors.primaryDark,
   },
 });

@@ -657,78 +657,108 @@ export const itemDetailStyle = StyleSheet.create({
   headerArea: {
     paddingTop: spacing.xxxl,
     backgroundColor: colors.white,
-  },
-
-  actionButtonWrap: {
-    alignItems: "flex-end",
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
-    backgroundColor: colors.white,
-  },
-
-  actionButton: {
-    minWidth: 88,
-    height: 44,
-    paddingHorizontal: spacing.xl,
-    borderRadius: radius.lg,
-    backgroundColor: colors.icon,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  actionButtonText: {
-    color: colors.white,
-    fontSize: typography.body,
-    fontWeight: "700",
-  },
-
-  disabledButton: {
-    opacity: 0.6,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(66, 165, 245, 0.08)",
   },
 
   scrollContent: {
     padding: spacing.lg,
     gap: spacing.lg,
-    paddingBottom: 300,
+    paddingBottom: spacing.xxxxl + 20,
   },
 
   card: {
-    backgroundColor: colors.cardBackground,
-    borderRadius: radius.lg,
+    backgroundColor: colors.white,
+    borderRadius: 24,
     padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: "rgba(66, 165, 245, 0.08)",
   },
 
-  label: {
-    fontSize: typography.subtitle,
+  infoGroupCard: {
+    backgroundColor: colors.white,
+    borderRadius: 24,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(66, 165, 245, 0.08)",
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 12,
+    elevation: 2,
+  },
+
+  compactFieldRow: {
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(15, 23, 42, 0.06)",
+  },
+
+  compactFieldRowMultiline: {
+    alignItems: "flex-start",
+  },
+
+  compactLabel: {
+    fontSize: 13,
     fontWeight: "700",
+    color: colors.textSecondary,
+    marginBottom: 8,
+  },
+
+  compactValueBox: {
+    minHeight: 44,
+    justifyContent: "center",
+  },
+
+  compactReadonlyBox: {
+    minHeight: 44,
+    justifyContent: "center",
+  },
+
+  compactValueBoxMultiline: {
+    minHeight: 88,
+    paddingTop: 2,
+  },
+
+  compactValueText: {
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: spacing.md,
+  },
+
+  warrantyInlineBox: {
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 12,
+    borderRadius: 14,
+    backgroundColor: colors.softBlue,
+    borderWidth: 1,
+    borderColor: "rgba(66, 165, 245, 0.18)",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  warrantyInlineExpiry: {
+    fontSize: 13,
+    color: colors.primaryDark,
+  },
+
+  warrantyInlineDday: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.primaryDark,
+  },
+
+  purchaseSectionInner: {
+    paddingVertical: spacing.md,
+    gap: spacing.sm,
   },
 
   required: {
     color: colors.danger,
-  },
-
-  input: {
-    minHeight: 48,
-    borderWidth: 1,
-    borderColor: colors.divider,
-    borderRadius: radius.md,
-    backgroundColor: colors.white,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    fontSize: typography.body,
-    color: colors.textPrimary,
-  },
-
-  readonlyInput: {
-    backgroundColor: colors.disabledBackground,
-    color: colors.textSecondary,
-  },
-
-  multilineInput: {
-    minHeight: 100,
-    textAlignVertical: "top",
   },
 
   loadingContainer: {
@@ -741,15 +771,6 @@ export const itemDetailStyle = StyleSheet.create({
   loadingText: {
     marginTop: spacing.lg,
     fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-
-  inputText: {
-    fontSize: typography.body,
-    color: colors.textPrimary,
-  },
-
-  readonlyInputText: {
     color: colors.textSecondary,
   },
 
@@ -849,7 +870,7 @@ export const itemDetailStyle = StyleSheet.create({
 
   productImage: {
     width: "100%",
-    height: 200,
+    aspectRatio: 1,
     borderRadius: radius.md,
   },
 
@@ -864,11 +885,38 @@ export const itemDetailStyle = StyleSheet.create({
 
   cameraButton: {
     position: "absolute",
-    right: spacing.xxxl,
-    bottom: spacing.xxxl,
-    backgroundColor: colors.icon,
-    borderRadius: radius.pill,
-    padding: spacing.sm,
+    bottom: spacing.md,
+    right: spacing.md,
+    height: 46,
+    paddingLeft: 8,
+    paddingRight: 14,
+    borderRadius: 999,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: "rgba(66, 165, 245, 0.18)",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.14,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+
+  cameraIconWrap: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.softBlue,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  cameraButtonText: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: colors.primaryDark,
   },
 
   imageActionContainer: {
@@ -891,23 +939,6 @@ export const itemDetailStyle = StyleSheet.create({
     color: colors.white,
     fontSize: typography.body,
     fontWeight: "600",
-  },
-  warrantyInfoWrap: {
-    marginTop: spacing.md,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  warrantyInfoExpiry: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-
-  warrantyInfoDday: {
-    fontSize: typography.body,
-    fontWeight: "700",
-    color: colors.primary,
   },
 
   warrantyPickerRow: {
@@ -975,8 +1006,9 @@ export const itemDetailStyle = StyleSheet.create({
   },
 
   productSummarySection: {
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.xs,
     paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
   },
 
   productSummaryLabelRow: {
@@ -987,23 +1019,25 @@ export const itemDetailStyle = StyleSheet.create({
   },
 
   productSummaryLabel: {
-    fontSize: typography.subtitle,
+    fontSize: 13,
     fontWeight: "700",
-    color: colors.textPrimary,
-  },
-
-  productSummaryTitle: {
-    fontSize: typography.title,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    marginBottom: spacing.sm,
-  },
-
-  productSummaryModel: {
-    fontSize: typography.body,
     color: colors.textSecondary,
   },
 
+  productSummaryTitle: {
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: "800",
+    color: colors.textPrimary,
+    marginBottom: 6,
+    letterSpacing: -0.4,
+  },
+
+  productSummaryModel: {
+    fontSize: 15,
+    color: colors.textSecondary,
+    lineHeight: 22,
+  },
   purchaseCardTopRow: {
     flexDirection: "row",
     alignItems: "stretch",
@@ -1025,30 +1059,17 @@ export const itemDetailStyle = StyleSheet.create({
   },
 
   purchaseCardLabel: {
-    fontSize: typography.subtitle,
+    fontSize: 13,
     fontWeight: "700",
-    color: colors.textPrimary,
-    marginBottom: spacing.md,
+    color: colors.textSecondary,
+    marginBottom: 8,
   },
 
   purchaseCardValue: {
-    fontSize: typography.body,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: "600",
     color: colors.textPrimary,
-  },
-
-  purchaseCardHeaderRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.sm,
-  },
-
-  purchaseCardPriceValue: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    textAlign: "right",
-    marginTop: spacing.xl,
   },
 
   purchaseCardInputBox: {
@@ -1074,18 +1095,23 @@ export const itemDetailStyle = StyleSheet.create({
   },
 
   purchaseCardInputText: {
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: "600",
     color: colors.textPrimary,
   },
 
-  readonlyValueText: {
-    fontSize: typography.body,
-    color: colors.textPrimary,
-    fontWeight: "500",
-  },
+  nearCenterCard: {
+    backgroundColor: colors.softBlue,
+    borderRadius: 24,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: "rgba(66, 165, 245, 0.12)",
 
-  readonlyTextBlock: {
-    paddingVertical: spacing.sm,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
 });
