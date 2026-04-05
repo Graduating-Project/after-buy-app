@@ -69,6 +69,12 @@ export default function ItemListScreen() {
   const [searchMode, setSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [itemActionModalVisible, setItemActionModalVisible] = useState(false);
+  const [renameModalVisible, setRenameModalVisible] = useState(false);
+  const [renameValue, setRenameValue] = useState("");
+
+  const [activeItem, setActiveItem] = useState<Folder | Device | null>(null);
+
   useLayoutEffect(() => {
     const parent = navigation.getParent();
 
@@ -140,9 +146,26 @@ export default function ItemListScreen() {
   const escapeRegExp = (value: string) =>
     value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  const renderHighlightedText = (text: string, query: string) => {
+  const truncateBreadcrumbLabel = (
+    label: string,
+    isLast: boolean,
+    maxLength = isLast ? 12 : 6,
+  ) => {
+    if (label.length <= maxLength) return label;
+    return `${label.slice(0, maxLength)}…`;
+  };
+
+  const renderHighlightedText = (
+    text: string,
+    query: string,
+    isFolderTitle = false,
+  ) => {
+    const baseStyle = isFolderTitle
+      ? styles.folderTitleText
+      : styles.deviceTitleText;
+
     if (!query.trim()) {
-      return <Text style={styles.titleText}>{text}</Text>;
+      return <Text style={baseStyle}>{text}</Text>;
     }
 
     const escapedQuery = escapeRegExp(query.trim());
@@ -150,7 +173,7 @@ export default function ItemListScreen() {
     const parts = text.split(regex);
 
     return (
-      <Text style={styles.titleText}>
+      <Text style={baseStyle}>
         {parts.map((part, index) => {
           const isMatch = part.toLowerCase() === query.trim().toLowerCase();
 
@@ -332,8 +355,14 @@ export default function ItemListScreen() {
       });
 
       setMoveModalVisible(false);
+      setSelectedFolders([]);
+      setSelectedDevices([]);
+      setActiveItem(null);
       await loadData();
-      exitSelectionMode();
+
+      if (selectionMode) {
+        exitSelectionMode();
+      }
 
       Alert.alert("완료", "항목이 이동되었습니다.");
     } catch (error) {
@@ -417,6 +446,114 @@ export default function ItemListScreen() {
     });
   };
 
+  const isFolderItem = (item: Folder | Device): item is Folder => {
+    return !("device_id" in item);
+  };
+
+  const getItemDisplayName = (item: Folder | Device) => {
+    return isFolderItem(item) ? item.folder_name : item.product_name;
+  };
+
+  const handleOpenItemActionMenu = (item: Folder | Device) => {
+    setActiveItem(item);
+    setItemActionModalVisible(true);
+  };
+
+  const handleOpenRenameModal = () => {
+    if (!activeItem) return;
+
+    setRenameValue(getItemDisplayName(activeItem));
+    setItemActionModalVisible(false);
+    setRenameModalVisible(true);
+  };
+
+  const handleDeleteSingleItem = () => {
+    if (!activeItem) return;
+
+    const isFolder = isFolderItem(activeItem);
+    const targetLabel = isFolder ? "폴더" : "아이템";
+
+    Alert.alert("삭제 확인", `${targetLabel}을(를) 삭제하시겠습니까?`, [
+      { text: "취소", style: "cancel" },
+      {
+        text: "삭제",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            if (isFolder) {
+              await folderService.deleteFolder(activeItem.folder_id);
+            } else {
+              await deviceService.deleteDevice(activeItem.device_id);
+            }
+
+            setItemActionModalVisible(false);
+            setActiveItem(null);
+            await loadData();
+
+            Alert.alert("완료", `${targetLabel}이(가) 삭제되었습니다.`);
+          } catch (error) {
+            Alert.alert("오류", `${targetLabel} 삭제 중 문제가 발생했습니다.`);
+          }
+        },
+      },
+    ]);
+  };
+
+  const handleMoveSingleItem = async () => {
+    if (!activeItem) return;
+
+    try {
+      if (isFolderItem(activeItem)) {
+        setSelectedFolders([activeItem.folder_id]);
+        setSelectedDevices([]);
+      } else {
+        setSelectedFolders([]);
+        setSelectedDevices([activeItem.device_id]);
+      }
+
+      await loadMoveModalData(folderId, folderName);
+      setItemActionModalVisible(false);
+      setMoveModalVisible(true);
+    } catch (error) {
+      Alert.alert("오류", "이동 위치를 불러오지 못했습니다.");
+    }
+  };
+
+  const handleSubmitRename = async () => {
+    if (!activeItem) return;
+
+    const trimmedName = renameValue.trim();
+    if (!trimmedName) {
+      Alert.alert("안내", "이름을 입력해주세요.");
+      return;
+    }
+
+    try {
+      if (isFolderItem(activeItem)) {
+        // TODO: folderService.updateFolderName(activeItem.folder_id, trimmedName)
+        await folderService.updateFolderName?.(
+          activeItem.folder_id,
+          trimmedName,
+        );
+      } else {
+        // TODO: deviceService.updateDeviceName(activeItem.device_id, trimmedName)
+        await deviceService.updateDeviceName?.(
+          activeItem.device_id,
+          trimmedName,
+        );
+      }
+
+      setRenameModalVisible(false);
+      setActiveItem(null);
+      setRenameValue("");
+      await loadData();
+
+      Alert.alert("완료", "이름이 수정되었습니다.");
+    } catch (error) {
+      Alert.alert("오류", "이름 수정 중 문제가 발생했습니다.");
+    }
+  };
+
   const renderListCard = ({
     item,
     selectable = false,
@@ -435,9 +572,20 @@ export default function ItemListScreen() {
     const isFolder = !("device_id" in item);
 
     return (
-      <TouchableOpacity style={styles.itemCard} onPress={onPress}>
+      <TouchableOpacity
+        activeOpacity={0.82}
+        style={[
+          styles.itemCard,
+          isFolder ? styles.folderCard : styles.deviceCard,
+          selectable &&
+            isSelected &&
+            (isFolder ? styles.folderCardSelected : styles.deviceCardSelected),
+        ]}
+        onPress={onPress}
+      >
         {selectable && onPressSelect && (
           <TouchableOpacity
+            activeOpacity={0.8}
             onPress={onPressSelect}
             style={[
               styles.itemSelectToggle,
@@ -450,9 +598,14 @@ export default function ItemListScreen() {
           </TouchableOpacity>
         )}
 
-        <View style={styles.thumbnailBox}>
+        <View
+          style={[
+            styles.thumbnailBox,
+            isFolder ? styles.folderThumbnailBox : styles.deviceThumbnailBox,
+          ]}
+        >
           {isFolder ? (
-            <Ionicons name="folder-outline" size={32} color={colors.icon} />
+            <Ionicons name="folder-outline" size={30} color="#3B82F6" />
           ) : item.image_url ? (
             <Image
               source={{ uri: item.image_url }}
@@ -460,16 +613,22 @@ export default function ItemListScreen() {
               resizeMode="cover"
             />
           ) : (
-            <Ionicons name="image-outline" size={32} color={colors.icon} />
+            <Ionicons name="image-outline" size={28} color="#94A3B8" />
           )}
         </View>
 
-        <View style={styles.textContainer}>
+        <View
+          style={[
+            styles.textContainer,
+            isFolder ? styles.folderTextContainer : styles.deviceTextContainer,
+          ]}
+        >
           {!isFolder && <Text style={styles.codeText}>{item.model_name}</Text>}
 
           {renderHighlightedText(
             isFolder ? item.folder_name : item.product_name,
             searchQuery,
+            isFolder,
           )}
 
           {isFolder ? (
@@ -482,13 +641,13 @@ export default function ItemListScreen() {
         </View>
 
         {showRightIcon && (
-          <View style={styles.rightIconWrapper}>
-            <Ionicons
-              name="ellipsis-vertical"
-              size={18}
-              color={colors.textSecondary}
-            />
-          </View>
+          <TouchableOpacity
+            style={styles.rightIconWrapper}
+            onPress={() => handleOpenItemActionMenu(item)}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons name="ellipsis-vertical" size={18} color="#636872" />
+          </TouchableOpacity>
         )}
       </TouchableOpacity>
     );
@@ -669,12 +828,12 @@ export default function ItemListScreen() {
                 >
                   {item.folder_id === null ? (
                     <MaterialCommunityIcons
-                      name="home"
+                      name="folder-home"
                       style={[
                         isLast
                           ? styles.breadcrumbTextActive
                           : styles.breadcrumbText,
-                        { fontSize: 25 },
+                        { fontSize: 22 },
                       ]}
                     />
                   ) : (
@@ -684,15 +843,17 @@ export default function ItemListScreen() {
                           ? styles.breadcrumbTextActive
                           : styles.breadcrumbText
                       }
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
                     >
-                      {item.folder_name}
+                      {truncateBreadcrumbLabel(item.folder_name, isLast)}
                     </Text>
                   )}
                 </TouchableOpacity>
 
                 {!isLast && (
                   <MaterialCommunityIcons
-                    name="arrow-right-drop-circle"
+                    name="chevron-right"
                     style={styles.breadcrumbDivider}
                   />
                 )}
@@ -730,6 +891,7 @@ export default function ItemListScreen() {
             <Text style={styles.emptyText}>등록된 항목이 없습니다.</Text>
           )
         }
+        ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
       />
 
       {!selectionMode && !searchMode && (
@@ -872,6 +1034,97 @@ export default function ItemListScreen() {
         </View>
       </Modal>
       <Modal
+        visible={itemActionModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setItemActionModalVisible(false)}
+      >
+        <View style={styles.actionModalOverlay}>
+          <Pressable
+            style={styles.actionModalBackdrop}
+            onPress={() => setItemActionModalVisible(false)}
+          />
+
+          <View style={styles.actionModalCard}>
+            {activeItem && (
+              <View style={styles.actionPreviewCard}>
+                {renderListCard({
+                  item: activeItem,
+                  selectable: false,
+                  onPress: () => {},
+                  showRightIcon: false,
+                })}
+              </View>
+            )}
+
+            <TouchableOpacity
+              style={styles.actionMenuButton}
+              onPress={handleOpenRenameModal}
+            >
+              <Text style={styles.actionMenuButtonText}>수정</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.actionMenuButton}
+              onPress={handleMoveSingleItem}
+            >
+              <Text style={styles.actionMenuButtonText}>이동</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.actionMenuButton}
+              onPress={handleDeleteSingleItem}
+            >
+              <Text style={styles.actionMenuDeleteText}>삭제</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={renameModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setRenameModalVisible(false)}
+      >
+        <View style={styles.renameModalOverlay}>
+          <Pressable
+            style={styles.renameModalBackdrop}
+            onPress={() => setRenameModalVisible(false)}
+          />
+
+          <View style={styles.renameModalCard}>
+            <Text style={styles.renameModalTitle}>이름 수정</Text>
+
+            <TextInput
+              value={renameValue}
+              onChangeText={setRenameValue}
+              placeholder="이름을 입력하세요"
+              autoFocus
+              style={styles.renameModalInput}
+            />
+
+            <View style={styles.renameModalButtonRow}>
+              <TouchableOpacity
+                style={styles.renameModalCancelButton}
+                onPress={() => {
+                  setRenameModalVisible(false);
+                  setRenameValue("");
+                }}
+              >
+                <Text style={styles.renameModalCancelText}>취소</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.renameModalConfirmButton}
+                onPress={handleSubmitRename}
+              >
+                <Text style={styles.renameModalConfirmText}>저장</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
         visible={moveModalVisible}
         transparent
         animationType="fade"
@@ -896,7 +1149,7 @@ export default function ItemListScreen() {
                     >
                       {item.folder_id === null ? (
                         <MaterialCommunityIcons
-                          name="home"
+                          name="folder-home"
                           style={[
                             isLast
                               ? styles.breadcrumbTextActive
@@ -911,15 +1164,17 @@ export default function ItemListScreen() {
                               ? styles.breadcrumbTextActive
                               : styles.breadcrumbText
                           }
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
                         >
-                          {item.folder_name}
+                          {truncateBreadcrumbLabel(item.folder_name, isLast)}
                         </Text>
                       )}
                     </TouchableOpacity>
 
                     {!isLast && (
                       <MaterialCommunityIcons
-                        name="arrow-right-drop-circle"
+                        name="chevron-right"
                         style={styles.breadcrumbDivider}
                       />
                     )}

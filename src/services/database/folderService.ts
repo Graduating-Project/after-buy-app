@@ -108,6 +108,26 @@ const getFolderContents = async (
   };
 };
 
+const updateFolderName = async (folderId: number, folderName: string) => {
+  const trimmedName = folderName.trim();
+
+  if (!trimmedName) {
+    throw new Error("폴더명은 비어 있을 수 없습니다.");
+  }
+
+  const result = await db.runAsync(
+    `
+    UPDATE folders
+    SET folder_name = ?,
+        updated_at = DATETIME('now')
+    WHERE folder_id = ?
+    `,
+    [trimmedName, folderId],
+  );
+
+  return result.changes;
+};
+
 const deleteFolder = async (folderId: number) => {
   const result = await db.runAsync(`DELETE FROM folders WHERE folder_id = ?`, [
     folderId,
@@ -193,6 +213,7 @@ export const folderService = {
   getFolderContents,
   getBreadcrumbs,
   createFolder,
+  updateFolderName,
   deleteFolder,
   moveFolders,
   isDescendantFolder,

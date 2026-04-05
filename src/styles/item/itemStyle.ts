@@ -74,8 +74,8 @@ export const itemListStyle = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-    backgroundColor: colors.white,
+    borderBottomColor: "#F1F5F9",
+    backgroundColor: "#FCFCFD",
   },
 
   moveModalBreadcrumbDivider: {
@@ -127,52 +127,101 @@ export const itemListStyle = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    paddingVertical: 16,
     backgroundColor: colors.white,
+  },
+
+  listSeparator: {
+    height: 1,
+    backgroundColor: "#F1F5F9",
+    marginLeft: 20, // 썸네일 왼쪽 맞춤 (중요)
+  },
+
+  folderCard: {
+    backgroundColor: "#FCFDFE",
+  },
+
+  deviceCard: {
+    backgroundColor: colors.white,
+  },
+
+  folderThumbnailBox: {
+    backgroundColor: "#EFF6FF",
+    borderColor: "#DBEAFE",
+  },
+
+  deviceThumbnailBox: {
+    backgroundColor: "#F8FAFC",
+    borderColor: "#EEF2F7",
+  },
+
+  folderTextContainer: {
+    paddingRight: spacing.sm,
+  },
+
+  deviceTextContainer: {
+    paddingRight: spacing.sm,
+  },
+
+  folderTitleText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1E3A8A",
+    marginBottom: 4,
+    letterSpacing: -0.2,
+  },
+
+  deviceTitleText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 4,
+    letterSpacing: -0.2,
   },
 
   thumbnailBox: {
     width: 72,
     height: 72,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: "#EEF2F7",
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.lg,
-    backgroundColor: colors.cardBackground,
+    backgroundColor: "#F8FAFC",
     overflow: "hidden",
   },
 
   textContainer: {
     flex: 1,
     justifyContent: "center",
+    paddingRight: spacing.sm,
   },
 
   codeText: {
-    fontSize: 13,
-    color: "#9CA3AF",
+    fontSize: 12,
+    color: "#98A2B3",
     marginBottom: 4,
+    fontWeight: "500",
   },
 
   titleText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
-    color: "#374151",
+    color: "#111827",
     marginBottom: 4,
+    letterSpacing: -0.2,
   },
 
   subtitleText: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#6B7280",
   },
 
   folderCountText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
-    color: "#4B5563",
+    color: "#667085",
     marginTop: 4,
   },
 
@@ -180,6 +229,7 @@ export const itemListStyle = StyleSheet.create({
     marginLeft: 12,
     alignItems: "center",
     justifyContent: "center",
+    opacity: 0.34,
   },
 
   emptyContainer: {
@@ -239,7 +289,7 @@ export const itemListStyle = StyleSheet.create({
   thumbnailImage: {
     width: "100%",
     height: "100%",
-    borderRadius: radius.sm,
+    borderRadius: 18,
   },
 
   selectionHeaderButton: {
@@ -253,15 +303,16 @@ export const itemListStyle = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    borderWidth: 2,
-    borderColor: colors.icon,
-    backgroundColor: colors.background,
+    borderWidth: 1.5,
+    borderColor: "#CBD5E1",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
 
   selectionCircleActive: {
-    backgroundColor: colors.icon,
+    backgroundColor: "#111827",
+    borderColor: "#111827",
   },
 
   headerTextButton: {
@@ -279,28 +330,30 @@ export const itemListStyle = StyleSheet.create({
 
   breadcrumbContainer: {
     paddingHorizontal: spacing.xxl,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.md,
+    paddingTop: spacing.xs,
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
+    rowGap: 4,
   },
 
   breadcrumbText: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    fontWeight: "400",
+    fontSize: 14,
+    color: "#94A3B8",
+    fontWeight: "500",
   },
 
   breadcrumbTextActive: {
-    fontSize: 15,
-    color: colors.textPrimary,
+    fontSize: 14,
+    color: "#111827",
     fontWeight: "700",
   },
 
   breadcrumbDivider: {
-    marginHorizontal: 6,
-    color: "#9CA3AF",
-    fontSize: 15,
+    marginHorizontal: 2,
+    color: "#CBD5E1",
+    fontSize: 18,
   },
 
   itemSelectToggle: {
@@ -310,16 +363,25 @@ export const itemListStyle = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    borderWidth: 2,
-    borderColor: colors.icon,
-    backgroundColor: colors.background,
+    borderWidth: 1.5,
+    borderColor: "#CBD5E1",
+    backgroundColor: "rgba(255,255,255,0.96)",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 3,
   },
 
   itemSelectToggleActive: {
-    backgroundColor: colors.icon,
+    backgroundColor: "#111827",
+    borderColor: "#111827",
+  },
+
+  folderCardSelected: {
+    backgroundColor: "#F0F7FF",
+  },
+
+  deviceCardSelected: {
+    backgroundColor: "#F8FAFC",
   },
 
   bottomActionBar: {
@@ -382,6 +444,120 @@ export const itemListStyle = StyleSheet.create({
     flex: 1,
     fontSize: typography.body,
     color: colors.textPrimary,
+  },
+
+  actionModalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+
+  actionModalBackdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
+  actionModalCard: {
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    padding: 16,
+  },
+
+  actionPreviewCard: {
+    marginBottom: 8,
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: colors.white,
+  },
+
+  actionMenuButton: {
+    minHeight: 52,
+    justifyContent: "center",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#F1F5F9",
+  },
+
+  actionMenuButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+  },
+
+  actionMenuDeleteText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#DC2626",
+  },
+
+  renameModalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+
+  renameModalBackdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
+  renameModalCard: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 20,
+  },
+
+  renameModalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 16,
+  },
+
+  renameModalInput: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: "#111827",
+    marginBottom: 16,
+  },
+
+  renameModalButtonRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+
+  renameModalCancelButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginRight: 8,
+  },
+
+  renameModalConfirmButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+
+  renameModalCancelText: {
+    fontSize: 15,
+    color: "#6B7280",
+  },
+
+  renameModalConfirmText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#111827",
   },
 });
 
