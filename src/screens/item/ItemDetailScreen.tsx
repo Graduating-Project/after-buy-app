@@ -245,6 +245,39 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
     return result;
   };
 
+  const formatCompactPrice = (priceText: string) => {
+    const price = Number(priceText);
+
+    if (!priceText || Number.isNaN(price)) {
+      return "예: 500000";
+    }
+
+    if (price < 10000) {
+      return `${price.toLocaleString()}원`;
+    }
+
+    const units = [
+      { value: 1000000000000, label: "조" },
+      { value: 100000000, label: "억" },
+      { value: 10000, label: "만" },
+    ];
+
+    for (const unit of units) {
+      if (price >= unit.value) {
+        const compact = price / unit.value;
+
+        const formatted =
+          compact >= 100
+            ? Math.floor(compact).toLocaleString()
+            : Number(compact.toFixed(1)).toString();
+
+        return `${formatted}${unit.label} 원`;
+      }
+    }
+
+    return `${price.toLocaleString()}원`;
+  };
+
   const getWarrantyDisplay = (totalMonthsText: string) => {
     const totalMonths = Number(totalMonthsText || "0");
 
@@ -525,7 +558,7 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
     setWarrantyExtraMonths((prev) => Math.floor(prev / 10));
   };
 
-  const renderField = (
+  const renderCompactField = (
     fieldKey: keyof DeviceDraft,
     value: string,
     options?: {
@@ -543,8 +576,13 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
     const isPressable = isEditMode && isEditable;
 
     return (
-      <View style={styles.card}>
-        <Text style={styles.label}>
+      <View
+        style={[
+          styles.compactFieldRow,
+          options?.multiline && styles.compactFieldRowMultiline,
+        ]}
+      >
+        <Text style={styles.compactLabel}>
           {fieldMeta[fieldKey]?.label}
           {showRequiredMark && <Text style={styles.required}> *</Text>}
         </Text>
@@ -555,29 +593,30 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
               if (isPressable) openFieldModal(fieldKey);
             }}
             style={[
-              styles.input,
-              !isEditable && styles.readonlyInput,
-              options?.multiline && styles.multilineInput,
+              styles.compactValueBox,
+              options?.multiline && styles.compactValueBoxMultiline,
             ]}
           >
             <Text
               style={[
-                styles.inputText,
-                !isEditable && styles.readonlyInputText,
+                styles.compactValueText,
                 !value && styles.placeholderText,
               ]}
               numberOfLines={options?.multiline ? 4 : 1}
             >
-              {value || options?.placeholder || ""}
+              {displayValue}
             </Text>
           </Pressable>
         ) : (
           <View
-            style={options?.multiline ? styles.readonlyTextBlock : undefined}
+            style={[
+              styles.compactReadonlyBox,
+              options?.multiline && styles.compactValueBoxMultiline,
+            ]}
           >
             <Text
               style={[
-                styles.readonlyValueText,
+                styles.compactValueText,
                 !value && styles.placeholderText,
               ]}
               numberOfLines={options?.multiline ? 4 : 1}
@@ -631,7 +670,7 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
     const purchaseStore = draft?.purchase_store ?? "";
 
     return (
-      <View style={styles.card}>
+      <View style={styles.purchaseSectionInner}>
         <View style={styles.purchaseCardTopRow}>
           <View style={styles.purchaseCardTopCell}>
             <Text style={styles.purchaseCardLabel}>
@@ -649,7 +688,7 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
                     !purchaseDate && styles.placeholderText,
                   ]}
                 >
-                  {purchaseDate || "YYYY-MM-DD"}
+                  {purchaseDate || "YYYY / MM /DD"}
                 </Text>
                 <Text> </Text>
 
@@ -700,9 +739,11 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
                   styles.purchaseCardValue,
                   !purchasePrice && styles.placeholderText,
                 ]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
               >
                 {purchasePrice
-                  ? `${Number(purchasePrice).toLocaleString()}원`
+                  ? formatCompactPrice(purchasePrice)
                   : "예: 500000"}
               </Text>
             )}
@@ -744,7 +785,11 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
   const renderNearCenterButton = () => {
     return (
       <TouchableOpacity
-        style={[styles.card, { height: 80, justifyContent: "center" }]}
+        activeOpacity={0.85}
+        style={[
+          styles.nearCenterCard,
+          { height: 80, justifyContent: "center" },
+        ]}
         onPress={() => console.log("인근 서비스센터 조회")}
       >
         <View
@@ -758,43 +803,43 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
             <MaterialCommunityIcons
               name="map-marker-outline"
               size={22}
-              color={colors.textSecondary}
+              color={colors.primaryDark}
             />
             <Text
               style={{
                 fontSize: typography.body,
-                color: colors.textPrimary,
+                color: colors.primaryDark,
                 fontWeight: "600",
               }}
             >
-              가까운 서비스 센터
+              가까운 서비스 센터 찾기
             </Text>
           </View>
           <MaterialCommunityIcons
             name="chevron-right"
             size={22}
-            color={colors.textSecondary}
+            color={colors.primaryDark}
           />
         </View>
       </TouchableOpacity>
     );
   };
 
-  const renderWarrantyField = () => {
+  const renderWarrantyFieldCompact = () => {
     const display = getWarrantyDisplay(draft?.warranty_months ?? "");
     const warrantyInfo = getWarrantyInfo();
 
     return (
-      <View style={styles.card}>
-        <Text style={styles.label}>
+      <View style={styles.compactFieldRow}>
+        <Text style={styles.compactLabel}>
           무상 보증 기간{isEditMode && <Text style={styles.required}> *</Text>}
         </Text>
 
         {isEditMode ? (
-          <Pressable onPress={openWarrantyModal} style={styles.input}>
+          <Pressable onPress={openWarrantyModal} style={styles.compactValueBox}>
             <Text
               style={[
-                styles.inputText,
+                styles.compactValueText,
                 !display.hasValue && styles.placeholderText,
               ]}
             >
@@ -802,22 +847,26 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
             </Text>
           </Pressable>
         ) : (
-          <Text
-            style={[
-              styles.readonlyValueText,
-              !display.hasValue && styles.placeholderText,
-            ]}
-          >
-            {display.hasValue ? display.text : "보증 기간을 선택하세요"}
-          </Text>
+          <View style={styles.compactReadonlyBox}>
+            <Text
+              style={[
+                styles.compactValueText,
+                !display.hasValue && styles.placeholderText,
+              ]}
+            >
+              {display.hasValue ? display.text : "보증 기간을 선택하세요"}
+            </Text>
+          </View>
         )}
 
         {warrantyInfo && (
-          <View style={styles.warrantyInfoWrap}>
-            <Text style={styles.warrantyInfoExpiry}>
+          <View style={styles.warrantyInlineBox}>
+            <Text style={styles.warrantyInlineExpiry}>
               {warrantyInfo.expiryText}
             </Text>
-            <Text style={styles.warrantyInfoDday}>{warrantyInfo.ddayText}</Text>
+            <Text style={styles.warrantyInlineDday}>
+              {warrantyInfo.ddayText}
+            </Text>
           </View>
         )}
       </View>
@@ -847,12 +896,18 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
           <TouchableOpacity
             onPress={() => setImageActionVisible(true)}
             style={styles.cameraButton}
+            activeOpacity={0.85}
           >
-            <MaterialCommunityIcons
-              name="camera-plus"
-              size={30}
-              color="white"
-            />
+            <View style={styles.cameraIconWrap}>
+              <MaterialCommunityIcons
+                name="camera-plus"
+                size={18}
+                color={colors.primaryDark}
+              />
+            </View>
+            <Text style={styles.cameraButtonText}>
+              {draft?.image_url ? "사진 변경" : "사진 등록"}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -916,27 +971,28 @@ export default function ItemDetailScreen({ navigation, route }: Props) {
         {renderImageCard()}
         {renderProductSummarySection()}
 
-        {renderField("brand", draft.brand, {
-          required: true,
-          placeholder: "브랜드를 입력하세요",
-        })}
+        <View style={styles.infoGroupCard}>
+          {renderCompactField("brand", draft.brand, {
+            required: true,
+            placeholder: "브랜드를 입력하세요",
+          })}
+          {renderWarrantyFieldCompact()}
+        </View>
 
-        {renderWarrantyField()}
+        <View style={styles.infoGroupCard}>{renderPurchaseInfoCard()}</View>
 
-        {renderPurchaseInfoCard()}
-
-        {renderField("product_link_url", draft.product_link_url, {
-          placeholder: "링크를 입력하세요",
-        })}
-
-        {renderField("serial_number", draft.serial_number, {
-          placeholder: "시리얼 번호를 입력하세요",
-        })}
-
-        {renderField("memo", draft.memo, {
-          placeholder: "메모를 입력하세요",
-          multiline: true,
-        })}
+        <View style={styles.infoGroupCard}>
+          {renderCompactField("product_link_url", draft.product_link_url, {
+            placeholder: "링크를 입력하세요",
+          })}
+          {renderCompactField("serial_number", draft.serial_number, {
+            placeholder: "시리얼 번호를 입력하세요",
+          })}
+          {renderCompactField("memo", draft.memo, {
+            placeholder: "메모를 입력하세요",
+            multiline: true,
+          })}
+        </View>
 
         {!isEditMode && renderNearCenterButton()}
       </ScrollView>

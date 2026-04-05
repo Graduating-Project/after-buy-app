@@ -36,6 +36,7 @@ export default function MainTabNavigator() {
           return TabIcon({ ...props, name });
         },
         headerShown: false,
+        animation: "shift",
       })}
     >
       <Tab.Screen name="홈" component={HomeScreen} />
